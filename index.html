@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn English - Mini Project</title>
+    <title>Advanced English Learning Platform</title>
     <style>
         * {
             margin: 0;
@@ -12,553 +12,1587 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
+            overflow-x: hidden;
         }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
             padding: 30px;
-            max-width: 600px;
-            width: 100%;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
         }
 
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-bar {
             background: #f8f9fa;
-            border-radius: 15px;
-            padding: 5px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            border-bottom: 1px solid #e9ecef;
         }
 
-        .tab {
-            flex: 1;
-            padding: 12px 20px;
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            background: #2c3e50;
+            margin: 0;
+        }
+
+        .nav-tab {
+            padding: 20px;
             background: transparent;
             border: none;
-            border-radius: 10px;
+            color: #bdc3c7;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
-            color: #666;
+            font-size: 1em;
+            position: relative;
+            overflow: hidden;
         }
 
-        .tab.active {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            transition: width 0.3s ease;
+        }
+
+        .nav-tab:hover {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        .nav-tab.active {
+            background: #3498db;
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .game-section {
+        .nav-tab.active::before {
+            width: 100%;
+        }
+
+        .content-area {
+            padding: 30px;
+            min-height: 600px;
+        }
+
+        .section {
             display: none;
-            animation: fadeIn 0.5s ease-in-out;
+            animation: slideInUp 0.6s ease-out;
         }
 
-        .game-section.active {
+        .section.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .word-card {
-            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
-            border-radius: 15px;
-            padding: 30px;
-            margin: 20px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        /* Advanced Vocabulary Section */
+        .vocab-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
         }
 
-        .word {
-            font-size: 2.5em;
-            font-weight: bold;
+        .word-display {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
         }
 
-        .definition {
-            font-size: 1.2em;
-            color: #2c3e50;
-            margin-bottom: 20px;
+        .main-word {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .phonetic {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            opacity: 0.9;
             font-style: italic;
         }
 
-        .buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 20px 0;
+        .word-type {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
         }
 
-        button {
-            padding: 12px 24px;
+        .word-details {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .definition-section {
+            margin-bottom: 25px;
+        }
+
+        .definition-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .definition-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        .example-sentence {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-style: italic;
+            border-left: 4px solid #3498db;
+        }
+
+        .synonyms, .antonyms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .syn-ant-chip {
+            background: linear-gradient(45deg, #a8edea, #fed6e3);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .difficulty-indicator {
+            display: flex;
+            gap: 5px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .difficulty-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e0e0e0;
+        }
+
+        .difficulty-dot.active {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+
+        /* Grammar Section */
+        .grammar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .grammar-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border-left: 5px solid #3498db;
+        }
+
+        .grammar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .grammar-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .grammar-rule {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 3px solid #27ae60;
+        }
+
+        .grammar-examples {
+            margin: 15px 0;
+        }
+
+        .correct-example {
+            color: #27ae60;
+            margin: 8px 0;
+        }
+
+        .incorrect-example {
+            color: #e74c3c;
+            margin: 8px 0;
+        }
+
+        .correct-example::before {
+            content: "✓ ";
+            font-weight: bold;
+        }
+
+        .incorrect-example::before {
+            content: "✗ ";
+            font-weight: bold;
+        }
+
+        /* Reading Comprehension */
+        .reading-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .passage-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .passage-meta {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+        }
+
+        .passage-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            columns: 2;
+            column-gap: 40px;
+            text-align: justify;
+        }
+
+        .questions-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 25px;
+        }
+
+        .question-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .answer-options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .answer-option {
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .answer-option:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .answer-option.selected {
+            background: #2196f3;
+            color: white;
+            border-color: #1976d2;
+        }
+
+        .answer-option.correct {
+            background: #4caf50;
+            color: white;
+            border-color: #388e3c;
+        }
+
+        .answer-option.incorrect {
+            background: #f44336;
+            color: white;
+            border-color: #d32f2f;
+        }
+
+        /* Writing Exercises */
+        .writing-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .writing-prompt {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        }
+
+        .prompt-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .prompt-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .writing-tips {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .writing-area {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .writing-textarea {
+            width: 100%;
+            min-height: 300px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 1em;
+            line-height: 1.6;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .writing-textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .word-count {
+            text-align: right;
+            margin-top: 10px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        /* Listening Section */
+        .listening-container {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .audio-player {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 2em;
+        }
+
+        .play-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        .audio-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .audio-description {
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .listening-exercises {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        /* Progress Tracking */
+        .progress-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .progress-item {
+            text-align: center;
+        }
+
+        .progress-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(#3498db 0deg, #e9ecef 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            position: relative;
+        }
+
+        .progress-circle::before {
+            content: '';
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: white;
+            position: absolute;
+        }
+
+        .progress-percent {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .progress-details {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        /* Control Buttons */
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
             border: none;
             border-radius: 25px;
-            cursor: pointer;
             font-weight: 600;
             font-size: 1em;
+            cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #3498db, #2980b9);
             color: white;
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(52, 152, 219, 0.4);
         }
 
         .btn-secondary {
-            background: linear-gradient(45deg, #ffecd2, #fcb69f);
-            color: #333;
+            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+            color: white;
         }
 
         .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(252, 182, 159, 0.4);
-        }
-
-        .sentence-builder {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .word-bank {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .word-chip {
-            background: linear-gradient(45deg, #a8edea, #fed6e3);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            user-select: none;
-            border: 2px solid transparent;
-        }
-
-        .word-chip:hover {
-            transform: scale(1.05);
-            border-color: #667eea;
-        }
-
-        .word-chip.used {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .sentence-area {
-            background: white;
-            border: 2px dashed #ddd;
-            border-radius: 10px;
-            padding: 20px;
-            min-height: 60px;
-            margin: 20px 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .quiz-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .quiz-option {
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.1em;
-        }
-
-        .quiz-option:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            background: linear-gradient(45d, #7f8c8d, #95a5a6);
         }
 
-        .quiz-option.correct {
-            background: linear-gradient(135deg, #56ab2f, #a8e6cf);
-        }
-
-        .quiz-option.incorrect {
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
-        }
-
-        .score {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
+        .btn-success {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
             color: white;
-            padding: 15px;
-            border-radius: 15px;
-            margin: 20px 0;
-            font-size: 1.2em;
-            font-weight: bold;
         }
 
-        .progress-bar {
-            background: #e0e0e0;
-            height: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-            margin: 20px 0;
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(39, 174, 96, 0.4);
         }
 
-        .progress-fill {
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            height: 100%;
-            border-radius: 5px;
-            transition: width 0.5s ease;
+        .btn-warning {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
         }
 
-        @media (max-width: 600px) {
-            .tabs {
-                flex-direction: column;
-                gap: 5px;
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(243, 156, 18, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .vocab-container,
+            .writing-container {
+                grid-template-columns: 1fr;
             }
             
-            .buttons {
+            .passage-text {
+                columns: 1;
+            }
+            
+            .main-word {
+                font-size: 2.5em;
+            }
+            
+            .control-buttons {
                 flex-direction: column;
                 align-items: center;
             }
             
-            .quiz-options {
-                grid-template-columns: 1fr;
+            .btn {
+                width: 100%;
+                max-width: 300px;
             }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+            
+            .main-word {
+                font-size: 2em;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Achievement Badges */
+        .achievement-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #f1c40f, #f39c12);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin: 5px;
+            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎓 Learn English</h1>
-        
-        <div class="tabs">
-            <button class="tab active" onclick="showSection('vocabulary')">📚 Vocabulary</button>
-            <button class="tab" onclick="showSection('sentences')">✍️ Sentences</button>
-            <button class="tab" onclick="showSection('quiz')">🎯 Quiz</button>
+    <div class="main-container">
+        <div class="header">
+            <h1>🎓 Advanced English Mastery Platform</h1>
+            <p>Comprehensive Language Learning Experience</p>
         </div>
 
-        <!-- Vocabulary Section -->
-        <div id="vocabulary" class="game-section active">
-            <div class="word-card">
-                <div class="word" id="currentWord">Hello</div>
-                <div class="definition" id="currentDefinition">A greeting used when meeting someone</div>
-                <div class="buttons">
-                    <button class="btn-primary" onclick="speakWord()">🔊 Pronounce</button>
-                    <button class="btn-secondary" onclick="nextWord()">➡️ Next Word</button>
-                </div>
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-number" id="totalWords">0</div>
+                <div class="stat-label">Words Mastered</div>
             </div>
-            <div class="score">
-                Words Learned: <span id="wordsLearned">0</span>
+            <div class="stat-card">
+                <div class="stat-number" id="streakDays">0</div>
+                <div class="stat-label">Day Streak</div>
             </div>
-        </div>
-
-        <!-- Sentence Builder Section -->
-        <div id="sentences" class="game-section">
-            <div class="sentence-builder">
-                <h3>🔨 Build a Sentence</h3>
-                <div class="word-bank" id="wordBank"></div>
-                <div class="sentence-area" id="sentenceArea">
-                    <p style="color: #999;">Click words above to build your sentence</p>
-                </div>
-                <div class="buttons">
-                    <button class="btn-primary" onclick="checkSentence()">✅ Check</button>
-                    <button class="btn-secondary" onclick="clearSentence()">🔄 Clear</button>
-                    <button class="btn-secondary" onclick="speakSentence()">🔊 Speak</button>
-                </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalScore">0</div>
+                <div class="stat-label">Total Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="level">1</div>
+                <div class="stat-label">Current Level</div>
             </div>
         </div>
 
-        <!-- Quiz Section -->
-        <div id="quiz" class="game-section">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-            </div>
-            <div class="word-card">
-                <div class="word" id="quizWord">Choose the correct definition</div>
-                <div class="quiz-options" id="quizOptions"></div>
-                <div class="buttons">
-                    <button class="btn-primary" onclick="nextQuiz()" id="nextBtn" style="display: none;">Next Question</button>
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('vocabulary')">📚 Advanced Vocabulary</button>
+            <button class="nav-tab" onclick="showSection('grammar')">📝 Grammar Mastery</button>
+            <button class="nav-tab" onclick="showSection('reading')">📖 Reading Comprehension</button>
+            <button class="nav-tab" onclick="showSection('writing')">✍️ Writing Skills</button>
+            <button class="nav-tab" onclick="showSection('listening')">🎧 Listening Practice</button>
+            <button class="nav-tab" onclick="showSection('progress')">📊 Progress Tracking</button>
+        </nav>
+
+        <div class="content-area">
+            <!-- Advanced Vocabulary Section -->
+            <div id="vocabulary" class="section active">
+                <div class="vocab-container">
+                    <div class="word-display">
+                        <div class="main-word" id="currentWord">Eloquent</div>
+                        <div class="phonetic" id="currentPhonetic">/ˈeləkwənt/</div>
+                        <div class="word-type" id="currentType">Adjective</div>
+                        <div class="difficulty-indicator" id="difficultyDots"></div>
+                    </div>
+                    <div class="word-details">
+                        <div class="definition-section">
+                            <div class="definition-title">📖 Definition</div>
+                            <div class="definition-text" id="currentDefinition">
+                                Fluent or persuasive in speaking or writing; expressing ideas clearly and effectively.
+                            </div>
+                            <div class="example-sentence" id="currentExample">
+                                "The professor gave an eloquent lecture that captivated the entire audience."
+                            </div>
+                        </div>
+                        <div class="definition-section">
+                            <div class="definition-title">🔄 Synonyms</div>
+                            <div class="synonyms" id="currentSynonyms"></div>
+                        </div>
+                        <div class="definition-section">
+                            <div class="definition-title">↔️ Antonyms</div>
+                            <div class="antonyms" id="currentAntonyms"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-buttons">
+                    <button class="btn btn-primary" onclick="speakWord()">🔊 Pronunciation</button>
+                    <button class="btn btn-secondary" onclick="previousWord()">⬅️ Previous</button>
+                    <button class="btn btn-secondary" onclick="nextWord()">➡️ Next</button>
+                    <button class="btn btn-success" onclick="markAsLearned()">✅ Mark as Learned</button>
+                    <button class="btn btn-warning" onclick="addToReview()">📌 Add to Review</button>
                 </div>
             </div>
-            <div class="score">
-                Score: <span id="quizScore">0</span> / <span id="totalQuestions">0</span>
+
+            <!-- Grammar Mastery Section -->
+            <div id="grammar" class="section">
+                <div class="grammar-grid" id="grammarGrid"></div>
+                <div class="control-buttons">
+                    <button class="btn btn-primary" onclick="loadGrammarExercise()">🎯 Practice Exercise</button>
+                    <button class="btn btn-secondary" onclick="showGrammarTips()">💡 Grammar Tips</button>
+                </div>
+            </div>
+
+            <!-- Reading Comprehension Section -->
+            <div id="reading" class="section">
+                <div class="reading-container">
+                    <div class="passage-title" id="passageTitle">The Future of Artificial Intelligence</div>
+                    <div class="passage-meta">📖 Reading Time: 8-10 minutes | 🎯 Level: Advanced | 📊 850 words</div>
+                    <div class="passage-text" id="passageText"></div>
+                    <div class="questions-section">
+                        <h3>📝 Comprehension Questions</h3>
+                        <div id="readingQuestions"></div>
+                    </div>
+                </div>
+                <div class="control-buttons">
+                    <button class="btn btn-primary" onclick="checkAnswers()">✅ Check Answers</button>
+                    <button class="btn btn-secondary" onclick="loadNewPassage()">📄 New Passage</button>
+                    <button class="btn btn-warning" onclick="speakPassage()">🔊 Read Aloud</button>
+                </div>
+            </div>
+
+            <!-- Writing Skills Section -->
+            <div id="writing" class="section">
+                <div class="writing-container">
+                    <div class="writing-prompt">
+                        <div class="prompt-title">✍️ Writing Prompt</div>
+                        <div class="prompt-text" id="writingPrompt">
+                            Write a persuasive essay about the impact of technology on modern education. 
+                            Consider both positive and negative aspects, and provide specific examples to support your arguments.
+                        </div>
+                        <div class="writing-tips">
+                            <strong>💡 Tips:</strong>
+                            <ul style="margin-top: 10px; padding-left: 20px;">
+                                <li>Use clear topic sentences</li>
+                                <li>Provide concrete examples</li>
+                                <li>Include counterarguments</li>
+                                <li>Aim for 300-500 words</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="writing-area">
+                        <textarea class="writing-textarea" id="writingText" placeholder="Start writing your response here..."></textarea>
+                        <div class="word-count">Words: <span id="wordCount">0</span></div>
+                    </div>
+                </div>
+                <div class="control-buttons">
+                    <button class="btn btn-primary" onclick="analyzeWriting()">🔍 Analyze Writing</button>
+                    <button class="btn btn-secondary" onclick="saveWriting()">💾 Save Draft</button>
+                    <button class="btn btn-warning" onclick="newPrompt()">🔄 New Prompt</button>
+                </div>
+            </div>
+
+            <!-- Listening Practice Section -->
+            <div id="listening" class="section">
+                <div class="listening-container">
+                    <div class="audio-player">
+                        <div class="play-button" onclick="playAudio()">▶️</div>
+                        <div class="audio-title" id="audioTitle">Academic Lecture: Climate Change</div>
+                        <div class="audio-description">🎧 Advanced listening exercise with native speaker</div>
+                        <div style="margin-top: 20px;">
+                            <span style="opacity: 0.8;">Duration: 5:30 | Speed: Normal | Accent: American</span>
+                        </div>
+                    </div>
+                    <div class="listening-exercises">
+                        <h3>🎯 Listening Comprehension</h3>
+                        <div id="listeningQuestions"></div>
+                    </div>
+                </div>
+                <div class="control-buttons">
+                    <button class="btn btn-primary" onclick="checkListening()">✅ Check Answers</button>
+                    <button class="btn btn-secondary" onclick="showTranscript()">📝 Show Transcript</button>
+                    <button class="btn btn-warning" onclick="adjustSpeed()">⚡ Adjust Speed</button>
+                </div>
+            </div>
+
+            <!-- Progress Tracking Section -->
+            <div id="progress" class="section">
+                <div class="progress-section">
+                    <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">📊 Your Learning Progress</h2>
+                    <div class="progress-grid">
+                        <div class="progress-item">
+                            <div class="progress-circle" data-progress="75">
+                                <div class="progress-percent">75%</div>
+                            </div>
+                            <div class="progress-label">Vocabulary</div>
+                            <div class="progress-details">1,250 / 1,667 words</div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-circle" data-progress="60">
+                                <div class="progress-percent">60%</div>
+                            </div>
+                            <div class="progress-label">Grammar</div>
+                            <div class="progress-details">18 / 30 lessons</div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-circle" data-progress="85">
+                                <div class="progress-percent">85%</div>
+                            </div>
+                            <div class="progress-label">Reading</div>
+                            <div class="progress-details">34 / 40 passages</div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-circle" data-progress="45">
+                                <div class="progress-percent">45%</div>
+                            </div>
+                            <div class="progress-label">Writing</div>
+                            <div class="progress-details">9 / 20 essays</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-section">
+                    <h3 style="text-align: center; margin-bottom: 25px; color: #2c3e50;">🏆 Achievements</h3>
+                    <div style="text-align: center;">
+                        <div class="achievement-badge">📚 Bookworm</div>
+                        <div class="achievement-badge">🔥 7-Day Streak</div>
+                        <div class="achievement-badge">🎯 Grammar Master</div>
+                        <div class="achievement-badge">✍️ Essay Expert</div>
+                        <div class="achievement-badge">🌟 Advanced Learner</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Notification Element -->
+    <div class="notification" id="notification"></div>
+
     <script>
-        // Vocabulary data
-        const vocabulary = [
-            { word: "Hello", definition: "A greeting used when meeting someone", example: "Hello, how are you?" },
-            { word: "Beautiful", definition: "Pleasing to look at; attractive", example: "The sunset is beautiful." },
-            { word: "Friend", definition: "A person you know well and like", example: "She is my best friend." },
-            { word: "Happy", definition: "Feeling pleased and content", example: "I am happy today." },
-            { word: "House", definition: "A building where people live", example: "My house is big." },
-            { word: "Book", definition: "Pages with words bound together", example: "I love reading this book." },
-            { word: "Water", definition: "Clear liquid that we drink", example: "Please give me some water." },
-            { word: "Family", definition: "Parents, children, and relatives", example: "I love my family." },
-            { word: "School", definition: "A place where people learn", example: "Children go to school." },
-            { word: "Love", definition: "A strong feeling of caring", example: "I love my parents." }
+        // Comprehensive vocabulary database with advanced words
+        const advancedVocabulary = [
+            {
+                word: "Eloquent",
+                phonetic: "/ˈeləkwənt/",
+                type: "Adjective",
+                difficulty: 4,
+                definition: "Fluent or persuasive in speaking or writing; expressing ideas clearly and effectively.",
+                example: "The professor gave an eloquent lecture that captivated the entire audience.",
+                synonyms: ["articulate", "fluent", "persuasive", "expressive", "silver-tongued"],
+                antonyms: ["inarticulate", "tongue-tied", "hesitant", "stammering"]
+            },
+            {
+                word: "Ubiquitous",
+                phonetic: "/juːˈbɪkwɪtəs/",
+                type: "Adjective",
+                difficulty: 5,
+                definition: "Present, appearing, or found everywhere; omnipresent.",
+                example: "Smartphones have become ubiquitous in modern society.",
+                synonyms: ["omnipresent", "pervasive", "universal", "widespread", "prevalent"],
+                antonyms: ["rare", "scarce", "limited", "uncommon"]
+            },
+            {
+                word: "Paradigm",
+                phonetic: "/ˈpærədaɪm/",
+                type: "Noun",
+                difficulty: 4,
+                definition: "A typical example or pattern of something; a model or framework.",
+                example: "The new teaching method represents a paradigm shift in education.",
+                synonyms: ["model", "framework", "pattern", "template", "archetype"],
+                antonyms: ["anomaly", "exception", "deviation"]
+            },
+            {
+                word: "Ephemeral",
+                phonetic: "/ɪˈfemərəl/",
+                type: "Adjective",
+                difficulty: 5,
+                definition: "Lasting for a very short time; transitory.",
+                example: "The beauty of cherry blossoms is ephemeral, lasting only a few weeks.",
+                synonyms: ["transient", "fleeting", "temporary", "momentary", "brief"],
+                antonyms: ["permanent", "enduring", "lasting", "eternal"]
+            },
+            {
+                word: "Catalyst",
+                phonetic: "/ˈkætəlɪst/",
+                type: "Noun",
+                difficulty: 3,
+                definition: "A person or thing that precipitates an event or causes change.",
+                example: "The invention of the internet was a catalyst for the digital revolution.",
+                synonyms: ["trigger", "stimulus", "agent", "impetus", "spark"],
+                antonyms: ["inhibitor", "deterrent", "obstacle", "hindrance"]
+            },
+            {
+                word: "Meticulous",
+                phonetic: "/mɪˈtɪkjələs/",
+                type: "Adjective",
+                difficulty: 4,
+                definition: "Showing great attention to detail; very careful and precise.",
+                example: "The scientist's meticulous research led to groundbreaking discoveries.",
+                synonyms: ["careful", "thorough", "precise", "scrupulous", "fastidious"],
+                antonyms: ["careless", "sloppy", "negligent", "hasty"]
+            },
+            {
+                word: "Resilient",
+                phonetic: "/rɪˈzɪliənt/",
+                type: "Adjective",
+                difficulty: 3,
+                definition: "Able to withstand or recover quickly from difficult conditions.",
+                example: "Children are remarkably resilient and can adapt to new situations easily.",
+                synonyms: ["robust", "tough", "adaptable", "flexible", "durable"],
+                antonyms: ["fragile", "brittle", "vulnerable", "weak"]
+            },
+            {
+                word: "Pragmatic",
+                phonetic: "/præɡˈmætɪk/",
+                type: "Adjective",
+                difficulty: 4,
+                definition: "Dealing with things sensibly and realistically; practical rather than idealistic.",
+                example: "A pragmatic approach to problem-solving focuses on what works best.",
+                synonyms: ["practical", "realistic", "sensible", "down-to-earth", "logical"],
+                antonyms: ["idealistic", "impractical", "unrealistic", "theoretical"]
+            },
+            {
+                word: "Innovation",
+                phonetic: "/ˌɪnəˈveɪʃən/",
+                type: "Noun",
+                difficulty: 3,
+                definition: "The action or process of introducing new ideas, methods, or products.",
+                example: "Technological innovation has transformed the way we communicate.",
+                synonyms: ["invention", "breakthrough", "advancement", "novelty", "creation"],
+                antonyms: ["tradition", "convention", "stagnation", "repetition"]
+            },
+            {
+                word: "Sophisticated",
+                phonetic: "/səˈfɪstɪkeɪtɪd/",
+                type: "Adjective",
+                difficulty: 3,
+                definition: "Having great knowledge or experience; complex and refined.",
+                example: "The software uses sophisticated algorithms to analyze data patterns.",
+                synonyms: ["refined", "cultured", "complex", "advanced", "elaborate"],
+                antonyms: ["simple", "basic", "primitive", "unsophisticated"]
+            }
         ];
 
-        // Sentence building data
-        const sentenceExercises = [
-            { words: ["I", "am", "happy", "today"], correct: "I am happy today" },
-            { words: ["The", "cat", "is", "sleeping"], correct: "The cat is sleeping" },
-            { words: ["We", "love", "learning", "English"], correct: "We love learning English" },
-            { words: ["My", "friend", "is", "very", "kind"], correct: "My friend is very kind" },
-            { words: ["Books", "are", "important", "for", "learning"], correct: "Books are important for learning" }
+        // Grammar lessons database
+        const grammarLessons = [
+            {
+                title: "Subjunctive Mood",
+                rule: "The subjunctive mood expresses hypothetical, doubtful, or unreal situations.",
+                explanation: "Used after certain verbs like 'suggest', 'recommend', 'demand' and in conditional statements.",
+                correctExamples: [
+                    "I suggest that he study harder for the exam.",
+                    "If I were you, I would accept the offer.",
+                    "It's important that she be on time."
+                ],
+                incorrectExamples: [
+                    "I suggest that he studies harder for the exam.",
+                    "If I was you, I would accept the offer.",
+                    "It's important that she is on time."
+                ]
+            },
+            {
+                title: "Parallel Structure",
+                rule: "Items in a series should be in the same grammatical form.",
+                explanation: "When listing items or actions, maintain consistency in structure for clarity and flow.",
+                correctExamples: [
+                    "She likes reading, writing, and drawing.",
+                    "The candidate was intelligent, articulate, and experienced.",
+                    "To succeed, you must plan, practice, and persevere."
+                ],
+                incorrectExamples: [
+                    "She likes reading, writing, and to draw.",
+                    "The candidate was intelligent, articulate, and had experience.",
+                    "To succeed, you must plan, practice, and perseverance."
+                ]
+            },
+            {
+                title: "Conditional Sentences",
+                rule: "Different conditional types express different degrees of possibility.",
+                explanation: "Zero, first, second, and third conditionals each have specific uses and structures.",
+                correctExamples: [
+                    "If it rains, I stay inside. (Zero conditional)",
+                    "If it rains, I will stay inside. (First conditional)",
+                    "If it rained, I would stay inside. (Second conditional)"
+                ],
+                incorrectExamples: [
+                    "If it will rain, I stay inside.",
+                    "If it would rain, I will stay inside.",
+                    "If it rains, I would stay inside."
+                ]
+            },
+            {
+                title: "Passive Voice Advanced",
+                rule: "Passive voice emphasizes the action rather than the actor.",
+                explanation: "Used when the doer is unknown, unimportant, or when focusing on the result.",
+                correctExamples: [
+                    "The report was completed by the team.",
+                    "Mistakes have been made in the calculation.",
+                    "The building will be demolished next month."
+                ],
+                incorrectExamples: [
+                    "The report was completed from the team.",
+                    "Mistakes have made in the calculation.",
+                    "The building will demolish next month."
+                ]
+            }
         ];
 
-        // Game state
-        let currentWordIndex = 0;
-        let wordsLearnedCount = 0;
-        let currentSentenceIndex = 0;
-        let selectedWords = [];
-        let quizIndex = 0;
-        let quizScore = 0;
-        let quizQuestions = [];
+        // Reading passages database
+        const readingPassages = [
+            {
+                title: "The Future of Artificial Intelligence",
+                meta: "📖 Reading Time: 8-10 minutes | 🎯 Level: Advanced | 📊 850 words",
+                text: `Artificial Intelligence (AI) has emerged as one of the most transformative technologies of the 21st century, fundamentally reshaping how we interact with the world around us. From voice assistants that help us navigate daily tasks to sophisticated algorithms that drive autonomous vehicles, AI's influence permeates virtually every aspect of modern life. As we stand at the threshold of an AI-driven future, it becomes increasingly important to understand both the tremendous potential and the significant challenges that lie ahead.
 
-        // Initialize the app
+                The current landscape of AI development is characterized by unprecedented growth and innovation. Machine learning algorithms have achieved remarkable breakthroughs in image recognition, natural language processing, and predictive analytics. Deep learning networks, inspired by the structure of the human brain, can now perform tasks that were once considered exclusively human domains. These systems can diagnose diseases with accuracy rivaling medical professionals, translate languages in real-time, and even create original artistic works.
+
+                However, the rapid advancement of AI technology also raises profound ethical and societal questions. Concerns about job displacement due to automation have sparked intense debates among economists, policymakers, and workers across various industries. While AI has the potential to eliminate certain types of jobs, it also creates new opportunities and industries that didn't exist before. The key challenge lies in ensuring that the benefits of AI development are distributed equitably across society.
+
+                Privacy and data security represent another critical dimension of the AI revolution. As AI systems become more sophisticated, they require vast amounts of data to train and improve their performance. This data often includes personal information about individuals, raising questions about consent, ownership, and potential misuse. Striking the right balance between innovation and privacy protection will be crucial for maintaining public trust in AI technologies.
+
+                Looking toward the future, experts predict that AI will continue to evolve in ways that could fundamentally alter human civilization. Some envision a world where AI assists humans in solving complex global challenges such as climate change, poverty, and disease. Others warn of potential risks, including the possibility of AI systems becoming too powerful or operating in ways that humans cannot understand or control.
+
+                The path forward requires careful consideration of how we develop, deploy, and regulate AI technologies. International cooperation will be essential for establishing standards and best practices that ensure AI serves humanity's best interests. Education and workforce development programs must evolve to prepare people for an AI-enhanced world, emphasizing skills that complement rather than compete with artificial intelligence.
+
+                As we navigate this technological revolution, one thing remains clear: the choices we make today about AI development will shape the world that future generations inherit. By approaching AI with both optimism and caution, we can work toward a future where artificial intelligence enhances human potential rather than replacing it.`,
+                questions: [
+                    {
+                        question: "According to the passage, what characterizes the current landscape of AI development?",
+                        options: [
+                            "Slow and cautious progress",
+                            "Unprecedented growth and innovation",
+                            "Declining interest from researchers",
+                            "Focus only on basic applications"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        question: "What does the author suggest about job displacement due to AI?",
+                        options: [
+                            "It will only affect manual labor jobs",
+                            "It's not a real concern for the future",
+                            "It creates both challenges and new opportunities",
+                            "It will primarily benefit wealthy individuals"
+                        ],
+                        correct: 2
+                    },
+                    {
+                        question: "What is identified as crucial for maintaining public trust in AI?",
+                        options: [
+                            "Faster development of AI systems",
+                            "Balancing innovation with privacy protection",
+                            "Reducing the cost of AI technology",
+                            "Limiting AI to specific industries"
+                        ],
+                        correct: 1
+                    }
+                ]
+            }
+        ];
+
+        // Writing prompts database
+        const writingPrompts = [
+            {
+                title: "Technology and Education",
+                prompt: "Write a persuasive essay about the impact of technology on modern education. Consider both positive and negative aspects, and provide specific examples to support your arguments.",
+                tips: [
+                    "Use clear topic sentences",
+                    "Provide concrete examples",
+                    "Include counterarguments",
+                    "Aim for 300-500 words"
+                ]
+            },
+            {
+                title: "Environmental Responsibility",
+                prompt: "Discuss the role of individual actions versus government policies in addressing climate change. Which approach is more effective and why?",
+                tips: [
+                    "Compare different approaches",
+                    "Use statistical evidence",
+                    "Consider global perspectives",
+                    "Maintain formal tone"
+                ]
+            },
+            {
+                title: "Social Media Impact",
+                prompt: "Analyze how social media has changed interpersonal communication. Has this change been predominantly positive or negative for society?",
+                tips: [
+                    "Provide balanced analysis",
+                    "Use personal observations",
+                    "Consider different age groups",
+                    "Support with examples"
+                ]
+            }
+        ];
+
+        // Listening exercises database
+        const listeningExercises = [
+            {
+                title: "Academic Lecture: Climate Change",
+                description: "Advanced listening exercise with native speaker",
+                duration: "5:30",
+                questions: [
+                    {
+                        question: "What is the main cause of global warming mentioned in the lecture?",
+                        options: [
+                            "Natural climate cycles",
+                            "Greenhouse gas emissions",
+                            "Solar radiation changes",
+                            "Volcanic activity"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        question: "According to the speaker, what percentage of climate scientists agree on human-caused climate change?",
+                        options: ["75%", "85%", "97%", "100%"],
+                        correct: 2
+                    }
+                ]
+            }
+        ];
+
+        // Application state
+        let currentVocabIndex = 0;
+        let userProgress = {
+            wordsLearned: 0,
+            streakDays: 0,
+            totalScore: 0,
+            level: 1,
+            learnedWords: new Set(),
+            reviewWords: new Set()
+        };
+
+        // Initialize application
         function init() {
-            showVocabulary();
-            loadSentenceExercise();
-            generateQuizQuestions();
+            loadVocabulary();
+            loadGrammarLessons();
+            loadReadingPassage();
+            loadWritingPrompt();
+            loadListeningExercise();
+            updateProgressStats();
+            setupEventListeners();
         }
 
-        // Tab switching
-        function showSection(section) {
+        // Section navigation
+        function showSection(sectionName) {
             // Hide all sections
-            document.querySelectorAll('.game-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
             
             // Show selected section
-            document.getElementById(section).classList.add('active');
+            document.getElementById(sectionName).classList.add('active');
+            
+            // Add active class to clicked tab
             event.target.classList.add('active');
         }
 
         // Vocabulary functions
-        function showVocabulary() {
-            const word = vocabulary[currentWordIndex];
+        function loadVocabulary() {
+            const word = advancedVocabulary[currentVocabIndex];
             document.getElementById('currentWord').textContent = word.word;
+            document.getElementById('currentPhonetic').textContent = word.phonetic;
+            document.getElementById('currentType').textContent = word.type;
             document.getElementById('currentDefinition').textContent = word.definition;
+            document.getElementById('currentExample').textContent = word.example;
+            
+            // Load synonyms
+            const synonymsContainer = document.getElementById('currentSynonyms');
+            synonymsContainer.innerHTML = '';
+            word.synonyms.forEach(syn => {
+                const chip = document.createElement('span');
+                chip.className = 'syn-ant-chip';
+                chip.textContent = syn;
+                synonymsContainer.appendChild(chip);
+            });
+            
+            // Load antonyms
+            const antonymsContainer = document.getElementById('currentAntonyms');
+            antonymsContainer.innerHTML = '';
+            word.antonyms.forEach(ant => {
+                const chip = document.createElement('span');
+                chip.className = 'syn-ant-chip';
+                chip.textContent = ant;
+                antonymsContainer.appendChild(chip);
+            });
+            
+            // Update difficulty indicator
+            const difficultyContainer = document.getElementById('difficultyDots');
+            difficultyContainer.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'difficulty-dot';
+                if (i <= word.difficulty) {
+                    dot.classList.add('active');
+                }
+                difficultyContainer.appendChild(dot);
+            }
         }
 
         function nextWord() {
-            wordsLearnedCount++;
-            document.getElementById('wordsLearned').textContent = wordsLearnedCount;
-            currentWordIndex = (currentWordIndex + 1) % vocabulary.length;
-            showVocabulary();
+            currentVocabIndex = (currentVocabIndex + 1) % advancedVocabulary.length;
+            loadVocabulary();
+            showNotification("Next word loaded!");
+        }
+
+        function previousWord() {
+            currentVocabIndex = currentVocabIndex === 0 ? advancedVocabulary.length - 1 : currentVocabIndex - 1;
+            loadVocabulary();
+            showNotification("Previous word loaded!");
         }
 
         function speakWord() {
-            const word = vocabulary[currentWordIndex].word;
+            const word = advancedVocabulary[currentVocabIndex].word;
             const utterance = new SpeechSynthesisUtterance(word);
+            utterance.rate = 0.7;
+            utterance.pitch = 1;
+            speechSynthesis.speak(utterance);
+        }
+
+        function markAsLearned() {
+            const currentWord = advancedVocabulary[currentVocabIndex].word;
+            userProgress.learnedWords.add(currentWord);
+            userProgress.wordsLearned = userProgress.learnedWords.size;
+            userProgress.totalScore += 10;
+            updateProgressStats();
+            showNotification(`"${currentWord}" marked as learned! +10 points`);
+            nextWord();
+        }
+
+        function addToReview() {
+            const currentWord = advancedVocabulary[currentVocabIndex].word;
+            userProgress.reviewWords.add(currentWord);
+            showNotification(`"${currentWord}" added to review list!`);
+        }
+
+        // Grammar functions
+        function loadGrammarLessons() {
+            const container = document.getElementById('grammarGrid');
+            container.innerHTML = '';
+            
+            grammarLessons.forEach((lesson, index) => {
+                const card = document.createElement('div');
+                card.className = 'grammar-card';
+                card.innerHTML = `
+                    <div class="grammar-title">${lesson.title}</div>
+                    <div class="grammar-rule">${lesson.rule}</div>
+                    <p style="margin: 15px 0; color: #7f8c8d;">${lesson.explanation}</p>
+                    <div class="grammar-examples">
+                        <strong>✅ Correct Examples:</strong>
+                        ${lesson.correctExamples.map(ex => `<div class="correct-example">${ex}</div>`).join('')}
+                        <strong style="margin-top: 15px; display: block;">❌ Incorrect Examples:</strong>
+                        ${lesson.incorrectExamples.map(ex => `<div class="incorrect-example">${ex}</div>`).join('')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function loadGrammarExercise() {
+            showNotification("Grammar exercise feature coming soon!");
+        }
+
+        function showGrammarTips() {
+            showNotification("Grammar tips feature coming soon!");
+        }
+
+        // Reading functions
+        function loadReadingPassage() {
+            const passage = readingPassages[0];
+            document.getElementById('passageTitle').textContent = passage.title;
+            document.getElementById('passageText').textContent = passage.text;
+            
+            const questionsContainer = document.getElementById('readingQuestions');
+            questionsContainer.innerHTML = '';
+            
+            passage.questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-item';
+                questionDiv.innerHTML = `
+                    <div class="question-text">${index + 1}. ${q.question}</div>
+                    <div class="answer-options">
+                        ${q.options.map((option, optIndex) => `
+                            <div class="answer-option" onclick="selectAnswer(${index}, ${optIndex})" data-question="${index}" data-option="${optIndex}">
+                                ${String.fromCharCode(65 + optIndex)}. ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+        }
+
+        function selectAnswer(questionIndex, optionIndex) {
+            // Clear previous selections for this question
+            document.querySelectorAll(`[data-question="${questionIndex}"]`).forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Select current option
+            event.target.classList.add('selected');
+        }
+
+        function checkAnswers() {
+            const passage = readingPassages[0];
+            let correct = 0;
+            
+            passage.questions.forEach((q, index) => {
+                const selectedOption = document.querySelector(`[data-question="${index}"].selected`);
+                if (selectedOption) {
+                    const selectedIndex = parseInt(selectedOption.dataset.option);
+                    const options = document.querySelectorAll(`[data-question="${index}"]`);
+                    
+                    if (selectedIndex === q.correct) {
+                        selectedOption.classList.add('correct');
+                        correct++;
+                    } else {
+                        selectedOption.classList.add('incorrect');
+                        options[q.correct].classList.add('correct');
+                    }
+                }
+            });
+            
+            userProgress.totalScore += correct * 5;
+            updateProgressStats();
+            showNotification(`You got ${correct}/${passage.questions.length} correct! +${correct * 5} points`);
+        }
+
+        function loadNewPassage() {
+            showNotification("New passage feature coming soon!");
+        }
+
+        function speakPassage() {
+            const passageText = document.getElementById('passageText').textContent;
+            const utterance = new SpeechSynthesisUtterance(passageText.substring(0, 500) + "...");
             utterance.rate = 0.8;
             speechSynthesis.speak(utterance);
         }
 
-        // Sentence building functions
-        function loadSentenceExercise() {
-            const exercise = sentenceExercises[currentSentenceIndex];
-            const wordBank = document.getElementById('wordBank');
-            wordBank.innerHTML = '';
-            
-            // Shuffle words
-            const shuffled = [...exercise.words].sort(() => Math.random() - 0.5);
-            
-            shuffled.forEach(word => {
-                const chip = document.createElement('div');
-                chip.className = 'word-chip';
-                chip.textContent = word;
-                chip.onclick = () => selectWord(chip, word);
-                wordBank.appendChild(chip);
-            });
-            
-            clearSentence();
+        // Writing functions
+        function loadWritingPrompt() {
+            const prompt = writingPrompts[0];
+            document.getElementById('writingPrompt').innerHTML = prompt.prompt;
         }
 
-        function selectWord(chip, word) {
-            if (chip.classList.contains('used')) return;
-            
-            chip.classList.add('used');
-            selectedWords.push({ chip, word });
-            updateSentenceArea();
+        function setupEventListeners() {
+            const textarea = document.getElementById('writingText');
+            textarea.addEventListener('input', updateWordCount);
         }
 
-        function updateSentenceArea() {
-            const sentenceArea = document.getElementById('sentenceArea');
-            
-            if (selectedWords.length === 0) {
-                sentenceArea.innerHTML = '<p style="color: #999;">Click words above to build your sentence</p>';
+        function updateWordCount() {
+            const text = document.getElementById('writingText').value;
+            const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            document.getElementById('wordCount').textContent = wordCount;
+        }
+
+        function analyzeWriting() {
+            const text = document.getElementById('writingText').value;
+            if (text.trim() === '') {
+                showNotification("Please write something first!");
                 return;
             }
             
-            sentenceArea.innerHTML = selectedWords.map((item, index) => 
-                `<span class="word-chip" onclick="removeWord(${index})">${item.word}</span>`
-            ).join(' ');
-        }
-
-        function removeWord(index) {
-            const removedWord = selectedWords.splice(index, 1)[0];
-            removedWord.chip.classList.remove('used');
-            updateSentenceArea();
-        }
-
-        function clearSentence() {
-            selectedWords = [];
-            document.querySelectorAll('.word-chip.used').forEach(chip => {
-                chip.classList.remove('used');
-            });
-            updateSentenceArea();
-        }
-
-        function checkSentence() {
-            const userSentence = selectedWords.map(item => item.word).join(' ');
-            const correctSentence = sentenceExercises[currentSentenceIndex].correct;
+            const wordCount = text.trim().split(/\s+/).length;
+            let feedback = `Analysis: ${wordCount} words written. `;
             
-            if (userSentence === correctSentence) {
-                alert('🎉 Correct! Well done!');
-                currentSentenceIndex = (currentSentenceIndex + 1) % sentenceExercises.length;
-                loadSentenceExercise();
-            } else {
-                alert('❌ Try again! The correct sentence is: ' + correctSentence);
+            if (wordCount >= 300) {
+                feedback += "Good length! ";
+                userProgress.totalScore += 15;
             }
-        }
-
-        function speakSentence() {
-            const sentence = selectedWords.map(item => item.word).join(' ');
-            if (sentence) {
-                const utterance = new SpeechSynthesisUtterance(sentence);
-                utterance.rate = 0.8;
-                speechSynthesis.speak(utterance);
-            }
-        }
-
-        // Quiz functions
-        function generateQuizQuestions() {
-            quizQuestions = vocabulary.map(item => {
-                const incorrect = vocabulary.filter(v => v !== item)
-                    .sort(() => Math.random() - 0.5)
-                    .slice(0, 3)
-                    .map(v => v.definition);
-                
-                const options = [item.definition, ...incorrect]
-                    .sort(() => Math.random() - 0.5);
-                
-                return {
-                    word: item.word,
-                    correct: item.definition,
-                    options: options
-                };
-            });
-            
-            loadQuizQuestion();
-        }
-
-        function loadQuizQuestion() {
-            if (quizIndex >= quizQuestions.length) {
-                alert(`Quiz Complete! Your score: ${quizScore}/${quizQuestions.length}`);
-                quizIndex = 0;
-                quizScore = 0;
-                generateQuizQuestions();
-                return;
+            if (text.includes('.') && text.includes(',')) {
+                feedback += "Good use of punctuation! ";
+                userProgress.totalScore += 5;
             }
             
-            const question = quizQuestions[quizIndex];
-            document.getElementById('quizWord').textContent = `What does "${question.word}" mean?`;
+            updateProgressStats();
+            showNotification(feedback);
+        }
+
+        function saveWriting() {
+            showNotification("Writing saved to drafts!");
+        }
+
+        function newPrompt() {
+            const randomPrompt = writingPrompts[Math.floor(Math.random() * writingPrompts.length)];
+            document.getElementById('writingPrompt').innerHTML = randomPrompt.prompt;
+            showNotification("New prompt loaded!");
+        }
+
+        // Listening functions
+        function loadListeningExercise() {
+            const exercise = listeningExercises[0];
+            document.getElementById('audioTitle').textContent = exercise.title;
             
-            const optionsContainer = document.getElementById('quizOptions');
-            optionsContainer.innerHTML = '';
+            const questionsContainer = document.getElementById('listeningQuestions');
+            questionsContainer.innerHTML = '';
             
-            question.options.forEach(option => {
-                const button = document.createElement('button');
-                button.className = 'quiz-option';
-                button.textContent = option;
-                button.onclick = () => selectQuizAnswer(button, option, question.correct);
-                optionsContainer.appendChild(button);
+            exercise.questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-item';
+                questionDiv.innerHTML = `
+                    <div class="question-text">${index + 1}. ${q.question}</div>
+                    <div class="answer-options">
+                        ${q.options.map((option, optIndex) => `
+                            <div class="answer-option" onclick="selectListeningAnswer(${index}, ${optIndex})" data-listening-question="${index}" data-listening-option="${optIndex}">
+                                ${String.fromCharCode(65 + optIndex)}. ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                questionsContainer.appendChild(questionDiv);
             });
-            
-            document.getElementById('nextBtn').style.display = 'none';
-            updateQuizProgress();
         }
 
-        function selectQuizAnswer(button, selected, correct) {
-            // Disable all options
-            document.querySelectorAll('.quiz-option').forEach(btn => {
-                btn.disabled = true;
-                if (btn.textContent === correct) {
-                    btn.classList.add('correct');
-                } else if (btn === button && selected !== correct) {
-                    btn.classList.add('incorrect');
-                }
+        function playAudio() {
+            showNotification("Audio playback feature coming soon!");
+        }
+
+        function selectListeningAnswer(questionIndex, optionIndex) {
+            document.querySelectorAll(`[data-listening-question="${questionIndex}"]`).forEach(opt => {
+                opt.classList.remove('selected');
             });
+            event.target.classList.add('selected');
+        }
+
+        function checkListening() {
+            showNotification("Listening check feature coming soon!");
+        }
+
+        function showTranscript() {
+            showNotification("Transcript feature coming soon!");
+        }
+
+        function adjustSpeed() {
+            showNotification("Speed adjustment feature coming soon!");
+        }
+
+        // Progress and utility functions
+        function updateProgressStats() {
+            document.getElementById('totalWords').textContent = userProgress.wordsLearned;
+            document.getElementById('streakDays').textContent = userProgress.streakDays;
+            document.getElementById('totalScore').textContent = userProgress.totalScore;
+            document.getElementById('level').textContent = Math.floor(userProgress.totalScore / 100) + 1;
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
             
-            if (selected === correct) {
-                quizScore++;
-            }
-            
-            document.getElementById('quizScore').textContent = quizScore;
-            document.getElementById('nextBtn').style.display = 'inline-block';
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
 
-        function nextQuiz() {
-            quizIndex++;
-            document.querySelectorAll('.quiz-option').forEach(btn => {
-                btn.disabled = false;
-                btn.classList.remove('correct', 'incorrect');
-            });
-            loadQuizQuestion();
-        }
-
-        function updateQuizProgress() {
-            const progress = ((quizIndex + 1) / quizQuestions.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-            document.getElementById('totalQuestions').textContent = quizQuestions.length;
-        }
-
-        // Initialize the app when page loads
+        // Initialize when page loads
         window.onload = init;
     </script>
 </body>
